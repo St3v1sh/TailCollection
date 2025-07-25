@@ -218,6 +218,12 @@ function renderInventory(items) {
                         <li><strong>Quantity:</strong><span>${item.quantity} Owned</span></li>
                         <li><strong>Upgrade Cost:</strong><span>${item.cost} tail${item.cost === 1 ? '' : 's'}</span></li>
                     </ul>
+                    <div class="item-details-commands">
+                        <span><strong>Click to copy:</strong></span>
+                        <pre><code data-copy="!settail ${item.display}">!settail ${item.display}</code></pre>
+                        <pre><code data-copy="!upgrade">!upgrade</code></pre>
+                        ${item.rarity === 'Epic' ? '<pre><code data-copy="!epicaction">!epicaction</code></pre>' : ''}
+                        </div>
                 </div>
             </div>
           `;
@@ -339,9 +345,33 @@ sortButtonContainer.addEventListener('click', (e) => {
 });
 
 inventoryPanel.addEventListener('click', (e) => {
+    // Expand/collapse item cards.
     const itemHeader = e.target.closest('.item-header');
-    if (!itemHeader) return;
-    itemHeader.parentElement.classList.toggle('expanded');
+    if (itemHeader) {
+        itemHeader.parentElement.classList.toggle('expanded');
+        return;
+    }
+
+    // Copying commands.
+    const commandBlock = e.target.closest('.item-details-commands pre');
+    if (commandBlock) {
+        const clickedPre = e.target.closest('pre');
+        const codeNode = clickedPre.querySelector('code');
+        const code = codeNode.dataset.copy;
+        navigator.clipboard.writeText(code).then(() => {
+            codeNode.textContent = 'Copied'.padEnd(code.length);
+
+            setTimeout(() => {
+                codeNode.textContent = code;
+            }, 1500);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            codeNode.textContent = 'Error!';
+            setTimeout(() => {
+                codeNode.textContent = code;
+            }, 1500);
+        });
+    }
 });
 
 refreshButton.addEventListener('click', () => {
