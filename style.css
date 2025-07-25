@@ -161,7 +161,7 @@ header {
   margin-top: 4px;
 }
 
-.pity-bar {
+#pity-bar {
   height: 100%;
   width: 0%; /* Set by JS */
   background: linear-gradient(
@@ -173,31 +173,15 @@ header {
   transition: width 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.pity-value {
+#pity-points-display {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  font-weight: 700;
   font-size: 0.8rem;
   color: white;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-}
-
-.user-search-input {
-  background: var(--color-bg);
-  border: 1px solid var(--color-panel-light);
-  color: var(--text-primary);
-  padding: 10px 16px;
-  font-size: 1em;
-  font-family: var(--font-body);
-  border-radius: var(--border-radius-sm);
-  transition: all var(--transition-speed);
-}
-
-.user-search-input:focus {
-  outline: none;
-  border-color: var(--color-panel-light);
-  box-shadow: 0 0 8px var(--color-panel-light);
 }
 
 .header-btn {
@@ -648,7 +632,7 @@ header {
 }
 
 /* --- MODAL STYLES --- */
-.modal-overlay {
+#user-search-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -665,7 +649,7 @@ header {
   transition: opacity 0.3s, visibility 0.3s;
 }
 
-.modal-overlay.active {
+#user-search-modal.active {
   opacity: 1;
   visibility: visible;
 }
@@ -683,11 +667,11 @@ header {
   user-select: none;
 }
 
-.modal-overlay.active .modal-content {
+#user-search-modal.active .modal-content {
   transform: translateY(0) scale(1);
 }
 
-.modal-close-btn {
+#modal-close-button {
   position: absolute;
   top: 20px;
   right: 20px;
@@ -701,7 +685,7 @@ header {
   transition: color var(--transition-speed);
 }
 
-.modal-close-btn:hover {
+#modal-close-button:hover {
   color: var(--text-primary);
 }
 
@@ -723,8 +707,25 @@ header {
   gap: 16px;
 }
 
-.modal-actions .user-search-input {
+#modal-search-input {
+  background: var(--color-bg);
+  border: 1px solid var(--color-panel-light);
+  color: var(--text-primary);
+  padding: 10px 16px;
+  font-size: 1em;
+  font-family: var(--font-body);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-speed);
+}
+
+#modal-search-input {
   width: 100%;
+}
+
+#modal-search-input:focus {
+  outline: none;
+  border-color: var(--color-panel-light);
+  box-shadow: 0 0 8px var(--color-panel-light);
 }
 
 .modal-actions .header-btn {

@@ -80,9 +80,9 @@ function calculateLifetimeStats(items) {
         const upgradesMade = Math.max(0, sizeRank - startingSizeRank);
         const tailsConsumedByUpgrades = upgradesMade * upgradeCost;
         const totalPulled = tailsConsumedByUpgrades + item.quantity;
+        stats.totalPulls += totalPulled;
 
         // Increment rarity stats.
-        stats.totalPulls += totalPulled;
         stats.rarityCounts[item.rarity] += totalPulled;
 
         // Increment size stats.
@@ -219,7 +219,7 @@ function renderInventory(items) {
                         <li><strong>Upgrade Cost:</strong><span>${item.cost} tail${item.cost === 1 ? '' : 's'}</span></li>
                     </ul>
                     <div class="item-details-commands">
-                        <span><strong>Click to copy:</strong></span>
+                        <span><strong>Click &amp; Copy:</strong></span>
                         <pre><code data-copy="!settail ${item.display}">!settail ${item.display}</code></pre>
                         <pre><code data-copy="!upgrade">!upgrade</code></pre>
                         ${item.rarity === 'Epic' ? '<pre><code data-copy="!epicaction">!epicaction</code></pre>' : ''}
