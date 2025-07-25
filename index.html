@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tail Collection</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="page-container">
+    <header>
+      <div class="header-content">
+        <div class="header-top-row">
+          <h1 id="header-title">Loading</h1>
+          <div class="header-actions">
+            <button id="search-button" class="header-btn">Search</button>
+            <button id="refresh-button" class="header-btn header-btn-secondary">Refresh</button>
+          </div>
+        </div>
+
+        <div id="user-stats">
+          <div class="stat-item equipped-tail-stat">
+            <div class="stat-label">EQUIPPED</div>
+            <div id="equipped-tail-display">None</div>
+          </div>
+          <div class="stat-item free-pulls-stat">
+            <div class="stat-label">FREE PULLS</div>
+            <div id="free-pulls-display">0</div>
+          </div>
+          <div class="stat-item pity-stat">
+            <div class="stat-label">PITY PROGRESS</div>
+            <div class="pity-bar-container">
+              <div id="pity-bar" class="pity-bar"></div>
+              <span id="pity-points-display" class="pity-value">0/100</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="lifetime-stats-container" style="display: none;">
+          <button id="toggle-stats-button" class="header-btn">Show Lifetime Stats</button>
+          <div id="lifetime-stats-details">
+            <div class="stats-grid">
+              <div class="stat-block lifetime-pulls">
+                <h4>Total Pulls</h4>
+                <p id="stats-total-pulls" class="stat-block-value">0</p>
+              </div>
+              <div class="stat-block rarity-counts">
+                <h4>Tails by Rarity</h4>
+                <ul>
+                  <li class="rarity-common-text"><span>Common:</span><strong id="stats-common-count">0</strong></li>
+                  <li class="rarity-rare-text"><span>Rare:</span><strong id="stats-rare-count">0</strong></li>
+                  <li class="rarity-epic-text"><span>Epic:</span><strong id="stats-epic-count">0</strong></li>
+                  <li class="rarity-legendary-text"><span>Legendary:</span><strong id="stats-legendary-count">0</strong></li>
+                </ul>
+              </div>
+              <div class="stat-block size-counts">
+                <h4>Tails by Size</h4>
+                <ul>
+                  <li><span>Small:</span><strong id="stats-small-count">0</strong></li>
+                  <li><span>Normal Sized:</span><strong id="stats-normal-count">0</strong></li>
+                  <li><span>Large:</span><strong id="stats-large-count">0</strong></li>
+                  <li><span>Massive:</span><strong id="stats-massive-count">0</strong></li>
+                </ul>
+              </div>
+              <div class="stat-block most-pulled">
+                <h4>Most Pulled</h4>
+                <ul>
+                  <li class="rarity-common-text"><span>Common:</span><strong id="stats-most-common">None</strong></li>
+                  <li class="rarity-rare-text"><span>Rare:</span><strong id="stats-most-rare">None</strong></li>
+                  <li class="rarity-epic-text"><span>Epic:</span><strong id="stats-most-epic">None</strong></li>
+                  <li class="rarity-legendary-text"><span>Legendary:</span><strong id="stats-most-legendary">None</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="sort-bar">
+        <span>SORT BY:</span>
+        <div class="sort-buttons">
+          <button class="sort-btn active" data-sort="rarity">RARITY</button>
+          <button class="sort-btn" data-sort="size">SIZE</button>
+          <button class="sort-btn" data-sort="quantity">QUANTITY</button>
+          <button class="sort-btn" data-sort="name">NAME</button>
+        </div>
+      </div>
+
+      <div id="inventory-panel" class="inventory-panel">
+        <!-- JS will render inventory here -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal for User Search -->
+  <div id="user-search-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button id="modal-close-button" class="modal-close-btn">&times;</button>
+      <h2>Find a User</h2>
+      <div class="modal-actions">
+        <input type="text" id="modal-search-input" class="user-search-input">
+        <button id="modal-search-button" class="header-btn">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+  <script src="parse-ini.js"></script>
+
+</body>
+
+</html>
