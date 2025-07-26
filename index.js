@@ -23,6 +23,7 @@ const sortComparisons = {
 const errorHTML = {
     communication: () => '<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">Error communicating with Twitch.</p>',
     noPermission: () => '<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">This extension requires permission to access your username.</p>',
+    askPermission: () => '<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">Use the "Grant Permission" button to allow this extension to access your username.</p>',
     other: (error) => `<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">${error.message}</p>`,
 }
 
@@ -383,8 +384,7 @@ inventoryPanel.addEventListener('click', (e) => {
             setTimeout(() => {
                 codeNode.textContent = code;
             }, 1500);
-        }).catch(err => {
-            console.error('Failed to copy text: ', err);
+        }).catch(_ => {
             codeNode.textContent = 'Error!';
             setTimeout(() => {
                 codeNode.textContent = code;
@@ -406,13 +406,19 @@ toggleStatsButton.addEventListener('click', () => {
 });
 
 // --- Twitch extension ---
-function fetchTwitchUsername(userId, token, clientId) {
-    const twitchApiURL = `https://api.twitch.tv/helix/users?id=${userId}`;
+function fetchTwitchUsername(helixToken, clientId) {
+    if (!window.Twitch.ext.viewer.isLinked) {
+        const innerHTML = errorHTML.askPermission(); const enableButtons = true;
+        displayError(innerHTML, enableButtons);
+        return;
+    }
+    const viewerId = window.Twitch.ext.viewer.id;
+    const twitchApiURL = `https://api.twitch.tv/helix/users/?id=${viewerId}`;
 
     fetch(twitchApiURL, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Extension ${helixToken}`,
             'Client-Id': clientId,
         }
     })
@@ -432,6 +438,15 @@ function fetchTwitchUsername(userId, token, clientId) {
             displayError(innerHTML, enableButtons);
         });
 }
+
+window.Twitch.ext.onAuthorized((auth) => {
+    if (auth.userId.startsWith('A')) {
+        const innerHTML = errorHTML.noPermission(); const enableButtons = true;
+        displayError(innerHTML, enableButtons);
+    } else {
+        fetchTwitchUsername(auth.helixToken, auth.clientId);
+    }
+});
 
 // Wait for Twitch data.
 pityPointsDisplay.textContent = '...';
