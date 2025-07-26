@@ -411,6 +411,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   padding: 16px 20px;
   cursor: pointer;
 }
@@ -525,6 +526,8 @@ header {
 
 .item-right-group {
   display: flex;
+  flex-grow: 1;
+  justify-content: end;
   align-items: center;
   gap: 16px;
   flex-shrink: 0;
@@ -790,7 +793,6 @@ body::-webkit-scrollbar-corner {
 
   .item-header {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: left;
     row-gap: 8px;
@@ -823,7 +825,6 @@ body::-webkit-scrollbar-corner {
   .item-right-group {
     display: flex;
     justify-content: space-between;
-    flex-grow: 1;
     order: 4;
     margin-left: 0;
   }
