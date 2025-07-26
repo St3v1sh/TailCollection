@@ -228,7 +228,7 @@ function renderInventory(items) {
                 <div class="item-display-group">
                     <div class="item-quantity-box">${quantityDisplay}</div>
                     <div class="rarity-tag">${item.rarity.toUpperCase()}</div>
-                    <span class="item-display">${item.display}</span>
+                    <div><span class="item-display">${item.display}</span><span class="small-item-quantity-box"> x ${quantityDisplay}</span></div>
                 </div>
                 <div class="item-right-group">
                     <span class="item-size size-${item.size.toLowerCase()}">${item.size}</span>
