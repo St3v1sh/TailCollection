@@ -280,16 +280,16 @@ header {
   display: inline-block;
 }
 
-.rarity-common-text span {
+.rarity-common-text {
   color: var(--rarity-common) !important;
 }
-.rarity-rare-text span {
+.rarity-rare-text {
   color: var(--rarity-rare) !important;
 }
-.rarity-epic-text span {
+.rarity-epic-text {
   color: var(--rarity-epic) !important;
 }
-.rarity-legendary-text span {
+.rarity-legendary-text {
   color: var(--rarity-legendary) !important;
 }
 
@@ -523,7 +523,7 @@ header {
 .item-size {
   font-family: var(--font-body);
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
   background-color: var(--color-bg);
   padding: 4px 12px;

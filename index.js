@@ -38,6 +38,7 @@ const pityPointsDisplay = document.getElementById('pity-points-display');
 // Lifetime Stats Elements.
 const lifetimeStatsContainer = document.getElementById('lifetime-stats-container');
 const toggleStatsButton = document.getElementById('toggle-stats-button');
+const statsUniquePulls = document.getElementById('stats-unique-count');
 const statsTotalPulls = document.getElementById('stats-total-pulls');
 const statsCommonCount = document.getElementById('stats-common-count');
 const statsRareCount = document.getElementById('stats-rare-count');
@@ -163,11 +164,24 @@ function renderLifetimeStats(stats) {
     }
     lifetimeStatsContainer.style.display = 'block';
 
+    statsUniquePulls.textContent = currentData.items.length;
     statsTotalPulls.textContent = stats.totalPulls;
+
     statsCommonCount.textContent = stats.rarityCounts.Common;
+    statsCommonCount.classList.remove('rarity-common-text');
+    if (stats.rarityCounts.Common > 0) statsCommonCount.classList.add('rarity-common-text');
+
     statsRareCount.textContent = stats.rarityCounts.Rare;
+    statsRareCount.classList.remove('rarity-rare-text');
+    if (stats.rarityCounts.Rare > 0) statsRareCount.classList.add('rarity-rare-text');
+
     statsEpicCount.textContent = stats.rarityCounts.Epic;
+    statsEpicCount.classList.remove('rarity-epic-text');
+    if (stats.rarityCounts.Epic > 0) statsEpicCount.classList.add('rarity-epic-text');
+
     statsLegendaryCount.textContent = stats.rarityCounts.Legendary;
+    statsLegendaryCount.classList.remove('rarity-legendary-text');
+    if (stats.rarityCounts.Legendary > 0) statsLegendaryCount.classList.add('rarity-legendary-text');
 
     statsSmallCount.textContent = stats.sizeCounts.Small;
     statsNormalCount.textContent = stats.sizeCounts['Normal Sized'];
@@ -175,9 +189,20 @@ function renderLifetimeStats(stats) {
     statsMassiveCount.textContent = stats.sizeCounts.Massive;
 
     statsMostCommon.textContent = stats.mostPulled.Common.name;
+    statsMostCommon.classList.remove('rarity-common-text');
+    if (stats.mostPulled.Common.count > 0) statsMostCommon.classList.add('rarity-common-text');
+
     statsMostRare.textContent = stats.mostPulled.Rare.name;
+    statsMostRare.classList.remove('rarity-rare-text');
+    if (stats.mostPulled.Rare.count > 0) statsMostRare.classList.add('rarity-rare-text');
+
     statsMostEpic.textContent = stats.mostPulled.Epic.name;
+    statsMostEpic.classList.remove('rarity-epic-text');
+    if (stats.mostPulled.Epic.count > 0) statsMostEpic.classList.add('rarity-epic-text');
+
     statsMostLegendary.textContent = stats.mostPulled.Legendary.name;
+    statsMostLegendary.classList.remove('rarity-legendary-text');
+    if (stats.mostPulled.Legendary.count > 0) statsMostLegendary.classList.add('rarity-legendary-text');
 }
 
 function renderInventory(items) {
@@ -221,7 +246,7 @@ function renderInventory(items) {
                     <div class="item-details-commands">
                         <span><strong>Click &amp; Copy:</strong></span>
                         <pre><code data-copy="!settail ${item.display}">!settail ${item.display}</code></pre>
-                        <pre><code data-copy="!upgrade">!upgrade</code></pre>
+                        ${item.quantity > upgradeCosts[item.rarity] && item.size !== 'Massive' ? '<pre><code data-copy="!upgrade">!upgrade</code></pre>' : ''}
                         ${item.rarity === 'Epic' ? '<pre><code data-copy="!epicaction">!epicaction</code></pre>' : ''}
                         </div>
                 </div>
