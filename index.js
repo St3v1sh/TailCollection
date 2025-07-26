@@ -207,6 +207,11 @@ function renderLifetimeStats(stats) {
 
 function renderInventory(items) {
     if (!items || items.length === 0) {
+        if (!currentData.username) return;
+
+        headerTitle.style.display = 'none';
+        lifetimeStatsContainer.style.display = 'none';
+        inventoryPanel.innerHTML = `<p style="text-align: center; font-size: 1.2rem; padding: 2rem;">No inventory data. Trigger a redeem on stream to pull a tail!</p>`;
         return;
     }
     inventoryPanel.innerHTML = '';
@@ -305,7 +310,7 @@ async function fetchAndDisplayUserData(username) {
         try {
             const errorData = JSON.parse(responseText);
             if (errorData.status === 'error') {
-                throw new Error(`User "${normalizedUsername}" not found.`);
+                throw new Error(`User "${normalizedUsername}" not found. If this is you, trigger a redeem on stream to pull a tail!`);
             }
         } catch (e) {
             // This is expected on success, as INI text is not valid JSON.
