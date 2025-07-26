@@ -20,6 +20,12 @@ const sortComparisons = {
     name: (a, b) => comparisons.name(a, b) || comparisons.rarity(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b),
 };
 
+const errorHTML = {
+    communication: () => '<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">Error communicating with Twitch.</p>',
+    noPermission: () => '<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">This extension requires permission to access your username.</p>',
+    other: (error) => `<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">${error.message}</p>`,
+}
+
 // Main page elements.
 const headerTitle = document.getElementById('header-title');
 const usernameTitle = document.getElementById('username-title');
@@ -52,12 +58,6 @@ const statsMostCommon = document.getElementById('stats-most-common');
 const statsMostRare = document.getElementById('stats-most-rare');
 const statsMostEpic = document.getElementById('stats-most-epic');
 const statsMostLegendary = document.getElementById('stats-most-legendary');
-
-// Modal elements.
-const searchModal = document.getElementById('user-search-modal');
-const modalCloseButton = document.getElementById('modal-close-button');
-const modalSearchInput = document.getElementById('modal-search-input');
-const modalSearchButton = document.getElementById('modal-search-button');
 
 function calculateLifetimeStats(items) {
     const stats = {
@@ -207,6 +207,11 @@ function renderLifetimeStats(stats) {
 
 function renderInventory(items) {
     if (!items || items.length === 0) {
+        if (!currentData.username) return;
+
+        headerTitle.style.display = 'none';
+        lifetimeStatsContainer.style.display = 'none';
+        inventoryPanel.innerHTML = `<p style="text-align: center; font-size: 1.2rem; padding: 2rem;">No inventory data. Trigger a redeem on stream to pull a tail!</p>`;
         return;
     }
     inventoryPanel.innerHTML = '';
@@ -284,7 +289,6 @@ async function fetchAndDisplayUserData(username) {
     headerTitle.textContent = 'Loading...';
     inventoryPanel.innerHTML = `<p style="text-align: center; font-size: 1.2rem; padding: 2rem;">Loading...</p>`;
     refreshButton.disabled = true;
-    searchButton.disabled = true;
     pityBar.style.width = '0%';
     pityPointsDisplay.textContent = '...';
     equippedTailDisplay.textContent = '...';
@@ -323,14 +327,21 @@ async function fetchAndDisplayUserData(username) {
         headerTitle.style.display = 'block';
     } catch (error) {
         currentData = {};
-        headerTitle.textContent = 'Error';
-        equippedTailDisplay.textContent = 'N/A';
-        freePullsDisplay.textContent = 'N/A';
-        pityPointsDisplay.textContent = 'N/A';
-        inventoryPanel.innerHTML = `<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">${error.message}</p>`;
+        displayError(errorHTML.other(error));
     } finally {
         refreshButton.disabled = false;
-        searchButton.disabled = false;
+    }
+}
+
+function displayError(innerHTML, enableButtons = false) {
+    headerTitle.textContent = 'Error';
+    equippedTailDisplay.textContent = 'N/A';
+    freePullsDisplay.textContent = 'N/A';
+    pityPointsDisplay.textContent = 'N/A';
+    inventoryPanel.innerHTML = innerHTML;
+
+    if (enableButtons) {
+        refreshButton.disabled = false;
     }
 }
 
@@ -342,23 +353,6 @@ function openStats() {
 function closeStats() {
     lifetimeStatsContainer.classList.remove('expanded');
     toggleStatsButton.textContent = 'Show Lifetime Stats';
-}
-
-function openModal() {
-    searchModal.classList.add('active');
-}
-
-function closeModal() {
-    searchModal.classList.remove('active');
-}
-
-function performSearch() {
-    const userToSearch = modalSearchInput.value.trim().replaceAll(" ", '_');
-    if (userToSearch) {
-        fetchAndDisplayUserData(userToSearch);
-        modalSearchInput.value = '';
-    }
-    closeModal();
 }
 
 // --- Event Listeners ---
@@ -411,44 +405,36 @@ toggleStatsButton.addEventListener('click', () => {
     }
 });
 
-searchButton.addEventListener('click', openModal);
-modalCloseButton.addEventListener('click', closeModal);
-searchModal.addEventListener('transitionend', (e) => {
-    if (e.propertyName === 'opacity' && searchModal.classList.contains('active')) {
-        modalSearchInput.focus();
-    }
-});
-searchModal.addEventListener('click', (e) => {
-    if (e.target === searchModal) {
-        closeModal();
-    }
-});
-modalSearchButton.addEventListener('click', performSearch);
-modalSearchInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter' && searchModal.classList.contains('active')) {
-        performSearch();
-    }
-});
+// --- Twitch extension ---
+function fetchTwitchUsername(userId, token, clientId) {
+    const twitchApiURL = `https://api.twitch.tv/helix/users?id=${userId}`;
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeModal();
-    }
-});
-
-// Initial load
-function Initialize() {
-    const params = new URLSearchParams(window.location.search);
-    const user = params.get('user');
-
-    if (user) {
-        fetchAndDisplayUserData(user);
-    } else {
-        // No user in URL, show a welcome/instruction message.
-        headerTitle.style.display = 'none';
-        lifetimeStatsContainer.style.display = 'none';
-        inventoryPanel.innerHTML = `<p style="text-align: center; font-size: 1.2rem; padding: 2rem;">No user specified. Use the "Search" button.</p>`;
-    }
+    fetch(twitchApiURL, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Client-Id': clientId,
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.data && data.data.length > 0) {
+                const username = data.data[0].display_name;
+                fetchAndDisplayUserData(username);
+            } else {
+                const innerHTML = errorHTML.communication(); const enableButtons = true;
+                displayError(innerHTML, enableButtons);
+            }
+        })
+        .catch(_ => {
+            const innerHTML = errorHTML.communication();
+            const enableButtons = true;
+            displayError(innerHTML, enableButtons);
+        });
 }
 
-Initialize();
+// Wait for Twitch data.
+pityPointsDisplay.textContent = '...';
+equippedTailDisplay.textContent = '...';
+freePullsDisplay.textContent = '...';
+inventoryPanel.innerHTML = `<p style="text-align: center; font-size: 1.2rem; padding: 2rem;">Waiting for Twitch data...</p>`;
