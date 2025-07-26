@@ -314,7 +314,7 @@ async function fetchAndDisplayUserData(username) {
         try {
             const errorData = JSON.parse(responseText);
             if (errorData.status === 'error') {
-                throw new Error(`User "${normalizedUsername}" not found.`);
+                throw new Error(`User "${normalizedUsername}" not found. If this is you, trigger a redeem on stream to pull a tail!`);
             }
         } catch (e) {
             // This is expected on success, as INI text is not valid JSON.
