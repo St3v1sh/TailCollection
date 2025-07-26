@@ -216,7 +216,7 @@ function renderInventory(items) {
 
         headerTitle.style.display = 'none';
         lifetimeStatsContainer.style.display = 'none';
-        inventoryPanel.innerHTML = `<p style="text-align: center; font-size: 1.2rem; padding: 2rem;">No inventory data. Trigger a redeem on stream to pull a tail!</p>`;
+        inventoryPanel.innerHTML = `<p style="text-align: center; font-size: 1.2rem; padding: 2rem;">No inventory data. If this is you, trigger a redeem on stream to pull a tail!</p>`;
         return;
     }
     inventoryPanel.innerHTML = '';
@@ -304,24 +304,11 @@ async function fetchAndDisplayUserData(username) {
     const normalizedUsername = username.toLowerCase();
     try {
         const response = await fetch(`${apiURL}?fileName=${normalizedUsername}.ini`);
-
         if (!response.ok) {
             throw new Error(`API request failed with status: ${response.status}`);
         }
+
         const responseText = await response.text();
-
-        // The API returns a JSON error object on failure, and an INI string on success.
-        try {
-            const errorData = JSON.parse(responseText);
-            if (errorData.status === 'error') {
-                throw new Error(`User "${normalizedUsername}" not found. If this is you, trigger a redeem on stream to pull a tail!`);
-            }
-        } catch (e) {
-            // This is expected on success, as INI text is not valid JSON.
-            // If the error was our specific "User not found" message, re-throw it.
-            if (e.message.includes('not found')) throw e;
-        }
-
         const parsedIni = parseIni(responseText);
         currentData = transformData(parsedIni, normalizedUsername);
         history.pushState({ user: normalizedUsername }, `Tails for ${normalizedUsername}`, `?user=${normalizedUsername}`);
@@ -469,5 +456,3 @@ pityPointsDisplay.textContent = '...';
 equippedTailDisplay.textContent = '...';
 freePullsDisplay.textContent = '...';
 inventoryPanel.innerHTML = `<p style="text-align: center; font-size: 1.2rem; padding: 2rem;">Waiting for Twitch data...</p>`;
-
-fetchAndDisplayUserData("st3v1sh");
