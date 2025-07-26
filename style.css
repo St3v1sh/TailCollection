@@ -641,7 +641,7 @@ header {
 body::-webkit-scrollbar {
   width: 8px;
   height: 8px;
-  background-color: var(--color-bg);
+  background-color: transparent;
 }
 
 body::-webkit-scrollbar-thumb {
@@ -649,7 +649,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 body::-webkit-scrollbar-corner {
-  background-color: var(--color-bg);
+  background-color: transparent;
 }
 
 .hidden {
