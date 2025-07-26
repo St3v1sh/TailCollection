@@ -527,10 +527,10 @@ header {
 .item-right-group {
   display: flex;
   flex-grow: 1;
+  flex-shrink: 0;
   justify-content: end;
   align-items: center;
   gap: 16px;
-  flex-shrink: 0;
   user-select: none;
 }
 
@@ -761,7 +761,7 @@ body::-webkit-scrollbar-corner {
 }
 /* --- END MODAL STYLES --- */
 
-@media (max-width: 650px) {
+@media (max-width: 700px) {
   #header-title {
     flex: none;
   }
@@ -792,9 +792,10 @@ body::-webkit-scrollbar-corner {
   }
 
   .item-header {
-    display: flex;
-    align-items: center;
     justify-content: left;
+    flex-direction: column;
+    align-items: start;
+    flex-wrap: nowrap;
     row-gap: 8px;
     column-gap: 12px;
   }
@@ -824,7 +825,9 @@ body::-webkit-scrollbar-corner {
 
   .item-right-group {
     display: flex;
+    width: 100%;
     justify-content: space-between;
+    flex-grow: 1;
     order: 4;
     margin-left: 0;
   }
