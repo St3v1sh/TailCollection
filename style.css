@@ -269,6 +269,10 @@ header {
   color: var(--text-secondary);
 }
 
+.stat-block li:last-child {
+  margin-bottom: 0;
+}
+
 .stat-block li strong {
   color: var(--text-primary);
   min-width: 0;
@@ -319,12 +323,13 @@ header {
 
 .sort-btn {
   font-family: var(--font-body);
+  font-size: 0.9rem;
   background-color: transparent;
   color: var(--text-secondary);
   border: none;
   padding: 8px 16px;
   cursor: pointer;
-  border-radius: 12px;
+  border-radius: var(--border-radius-sm);
   flex-grow: 1;
   transition: all var(--transition-speed) ease;
 }
@@ -355,23 +360,23 @@ header {
 }
 
 .item-card.rarity-common.equipped {
-  box-shadow: 0 0 15px var(--rarity-common), 0 0 5px var(--rarity-common) inset;
+  box-shadow: 0 0 10px var(--rarity-common), 0 0 50px var(--rarity-common) inset;
   border-color: var(--rarity-common);
 }
 
 .item-card.rarity-rare.equipped {
-  box-shadow: 0 0 15px var(--rarity-rare), 0 0 5px var(--rarity-rare) inset;
+  box-shadow: 0 0 10px var(--rarity-rare), 0 0 50px var(--rarity-rare) inset;
   border-color: var(--rarity-rare);
 }
 
 .item-card.rarity-epic.equipped {
-  box-shadow: 0 0 15px var(--rarity-epic), 0 0 5px var(--rarity-epic) inset;
+  box-shadow: 0 0 10px var(--rarity-epic), 0 0 50px var(--rarity-epic) inset;
   border-color: var(--rarity-epic);
 }
 
 .item-card.rarity-legendary.equipped {
-  box-shadow: 0 0 15px var(--rarity-legendary),
-    0 0 5px var(--rarity-legendary) inset;
+  box-shadow: 0 0 10px var(--rarity-legendary),
+    0 0 50px var(--rarity-legendary) inset;
   border-color: var(--rarity-legendary);
 }
 
@@ -432,6 +437,12 @@ header {
   font-size: 1.2rem;
   flex-shrink: 0;
   user-select: none;
+}
+
+.small-item-quantity-box {
+  display: none;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
 }
 
 .item-display {
@@ -569,7 +580,7 @@ header {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 24px;
-  padding: 16px 24px;
+  padding: 16px 20px;
   background-color: rgba(0, 0, 0, 0.2);
   border-top: 1px solid var(--color-panel-light);
 }
@@ -733,7 +744,7 @@ header {
 }
 /* --- END MODAL STYLES --- */
 
-@media (max-width: 768px) {
+@media (max-width: 650px) {
   #header-title {
     flex: none;
   }
@@ -787,6 +798,10 @@ header {
     display: none;
   }
 
+  .small-item-quantity-box {
+    display: inline;
+  }
+
   .rarity-tag {
     order: 3;
   }
@@ -818,5 +833,82 @@ header {
 
   .pity-stat {
     grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 400px) {
+  .page-container {
+    padding: 8px;
+  }
+
+  .header-content {
+    gap: 8px;
+  }
+
+  header {
+    border-radius: var(--border-radius-md);
+    padding: 8px;
+    margin-bottom: 12px;
+  }
+
+  #header-title {
+    font-size: 2rem;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .header-btn {
+    padding: 8px 24px;
+    font-size: 1rem;
+  }
+
+  #user-stats {
+    padding: 12px;
+  }
+
+  .stats-grid {
+    font-size: 0.9rem;
+  }
+
+  .sort-bar {
+    margin-bottom: 12px;
+    gap: 8px;
+  }
+
+  .sort-btn {
+    font-size: 0.8rem;
+  }
+
+  .item-card {
+    border-left-width: 4px;
+  }
+
+  .item-card.rarity-common.equipped {
+    box-shadow: 0 0 5px var(--rarity-common),
+      0 0 50px var(--rarity-common) inset;
+  }
+
+  .item-card.rarity-rare.equipped {
+    box-shadow: 0 0 5px var(--rarity-rare), 0 0 50px var(--rarity-rare) inset;
+  }
+
+  .item-card.rarity-epic.equipped {
+    box-shadow: 0 0 5px var(--rarity-epic), 0 0 50px var(--rarity-epic) inset;
+  }
+
+  .item-card.rarity-legendary.equipped {
+    box-shadow: 0 0 5px var(--rarity-legendary),
+      0 0 50px var(--rarity-legendary) inset;
+  }
+
+  .item-header {
+    padding: 8px 10px;
+  }
+
+  .item-details-content {
+    padding: 8px 10px;
+    font-size: 0.9rem;
   }
 }
