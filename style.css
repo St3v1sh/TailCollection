@@ -638,6 +638,20 @@ header {
   cursor: pointer;
 }
 
+body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-bg);
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--text-secondary);
+}
+
+body::-webkit-scrollbar-corner {
+  background-color: var(--color-bg);
+}
+
 .hidden {
   display: none;
 }
@@ -910,5 +924,11 @@ header {
   .item-details-content {
     padding: 8px 10px;
     font-size: 0.9rem;
+  }
+
+  body::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    background-color: var(--color-bg);
   }
 }
