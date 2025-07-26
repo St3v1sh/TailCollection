@@ -22,11 +22,12 @@ const sortComparisons = {
     name: (a, b) => comparisons.name(a, b) || comparisons.rarity(a, b) || comparisons.upgradeable(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b),
 };
 
+const grantPermissionSVG = '<svg width="20" height="20" viewBox="0 0 20 20" focusable="false" aria-hidden="true" role="presentation" fill="var(--text-primary)"><path fill-rule="evenodd" d="M7 2a4 4 0 0 0-1.015 7.87A1.334 1.334 0 0 1 4.667 11 2.667 2.667 0 0 0 2 13.667V18h2v-4.333c0-.368.298-.667.667-.667A3.32 3.32 0 0 0 7 12.047 3.32 3.32 0 0 0 9.333 13c.369 0 .667.299.667.667V18h2v-4.333A2.667 2.667 0 0 0 9.333 11c-.667 0-1.22-.49-1.318-1.13A4.002 4.002 0 0 0 7 2zM5 6a2 2 0 1 0 4 0 2 2 0 0 0-4 0z" clip-rule="evenodd"></path><path d="m15 7 3 3-3 3v-2h-3V9h3V7z"></path></svg>';
 const errorHTML = {
-    communication: () => '<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">Error communicating with Twitch.</p>',
-    noPermission: () => '<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">This extension requires permission to access your username.</p>',
-    askPermission: () => '<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">Use the "Grant Permission" button to allow this extension to access your username.</p>',
-    other: (error) => `<p style="color: #ff8a8a; font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">${error.message}</p>`,
+    communication: () => '<p style="color: var(--color-error); font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">Error communicating with Twitch. Please try again.</p>',
+    noPermission: () => `<p style="color: var(--color-error); font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">This extension requires your username.<br><br>Use the "Grant Permissions" button to access your inventory.<br><br>It looks like this:</p>${grantPermissionSVG}`,
+    askPermission: () => `<p style="color: var(--color-error); font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">Use the "Grant Permissions" button to access your inventory.<br><br>It looks like this:</p>${grantPermissionSVG}`,
+    other: (error) => `<p style="color: var(--color-error); font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">${error.message}</p>`,
 }
 
 // Main page elements.
@@ -75,6 +76,9 @@ function setStatValue(element, value) {
     element.textContent = displayCapped(value);
     element.title = value > 999 ? String(value) : '';
 }
+
+// Modal.
+const modalBackground = document.getElementById('modal-background');
 
 function calculateLifetimeStats(items) {
     const stats = {
@@ -382,6 +386,7 @@ async function fetchAndDisplayUserData(username) {
         headerTitle.style.display = 'block';
     } catch (error) {
         currentData = {};
+        console.error(error);
         displayError(errorHTML.other(error));
     } finally {
         refreshButton.disabled = false;
@@ -398,6 +403,15 @@ function displayError(innerHTML, enableButtons = false) {
     if (enableButtons) {
         refreshButton.disabled = false;
     }
+}
+
+function showErrorModal(innerHTML) {
+    modalBackground.innerHTML = innerHTML;
+    modalBackground.classList.add('active');
+}
+
+function closeErrorModal() {
+    modalBackground.classList.remove('active');
 }
 
 function openStats() {
@@ -464,10 +478,12 @@ toggleStatsButton.addEventListener('click', () => {
 // --- Twitch extension ---
 function fetchTwitchUsername(helixToken, clientId) {
     if (!window.Twitch.ext.viewer.isLinked) {
-        const innerHTML = errorHTML.askPermission(); const enableButtons = true;
-        displayError(innerHTML, enableButtons);
+        const innerHTML = errorHTML.askPermission();
+        showErrorModal(innerHTML);
         return;
     }
+    closeErrorModal();
+
     const viewerId = window.Twitch.ext.viewer.id;
     const twitchApiURL = `https://api.twitch.tv/helix/users/?id=${viewerId}`;
 
@@ -497,8 +513,8 @@ function fetchTwitchUsername(helixToken, clientId) {
 
 window.Twitch.ext.onAuthorized((auth) => {
     if (auth.userId.startsWith('A')) {
-        const innerHTML = errorHTML.noPermission(); const enableButtons = true;
-        displayError(innerHTML, enableButtons);
+        const innerHTML = errorHTML.noPermission();
+        showErrorModal(innerHTML);
     } else {
         fetchTwitchUsername(auth.helixToken, auth.clientId);
     }
@@ -509,3 +525,5 @@ pityPointsDisplay.textContent = '...';
 equippedTailDisplay.textContent = '...';
 freePullsDisplay.textContent = '...';
 inventoryPanel.innerHTML = `<p style="text-align: center; font-size: 1.2rem; padding: 2rem;">Waiting for Twitch data...</p>`;
+
+fetchAndDisplayUserData("st3v1sh");
