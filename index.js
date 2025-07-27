@@ -117,7 +117,7 @@ function transformData(iniData, username) {
         if (key === 'UserSettings') continue;
 
         const itemData = iniData[key];
-        // Basic validation to ensure we can display
+        // Basic validation to ensure we can display.
         if (itemData && itemData.Display && itemData.Quantity && itemData.Rarity && itemData.Size) {
             items.push({
                 display: itemData.Display,
@@ -240,7 +240,7 @@ function renderInventory(items) {
                     </div>
                 </div>
                 <div class="item-right-group">
-                    <span class="item-size size-${item.size.toLowerCase()}">${item.size}</span>
+                    <span class="item-size size-${item.size.toLowerCase().split(' ')[0]}">${item.size}</span>
                     <div class="expand-icon">+</div>
                 </div>
             </div>
