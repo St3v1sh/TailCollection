@@ -386,7 +386,7 @@ inventoryPanel.addEventListener('click', (e) => {
         return;
     }
 
-    // Copying commands.
+    // Selecting commands for manual copy.
     const commandBlock = e.target.closest('.item-details-commands pre');
     if (commandBlock) {
         const clickedPre = e.target.closest('pre');
@@ -398,12 +398,13 @@ inventoryPanel.addEventListener('click', (e) => {
             setTimeout(() => {
                 codeNode.textContent = code;
             }, 1500);
-        }).catch(err => {
-            console.error('Failed to copy text: ', err);
-            codeNode.textContent = 'Error!';
-            setTimeout(() => {
-                codeNode.textContent = code;
-            }, 1500);
+        }).catch(_ => {
+            // No copy permission, select the text instead.
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(codeNode);
+            selection.removeAllRanges();
+            selection.addRange(range);
         });
     }
 });
