@@ -387,7 +387,6 @@ header {
   padding: 3px 9px;
   border-radius: 4px;
   font-size: 0.7rem;
-  margin-left: auto;
   letter-spacing: 1px;
 }
 
@@ -411,7 +410,6 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
   padding: 16px 20px;
   cursor: pointer;
 }
@@ -423,6 +421,14 @@ header {
   flex-grow: 1;
   min-width: 0;
   padding-right: 16px;
+}
+
+.item-name-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
 }
 
 .item-quantity-box {
@@ -801,14 +807,14 @@ body::-webkit-scrollbar-corner {
   }
 
   .item-display-group {
-    display: contents;
+    flex-direction: column;
+    align-items: start;
   }
 
   .item-display {
-    order: 1;
-    flex-basis: 100%;
     font-size: 1.1rem;
     padding-right: 0;
+    white-space: normal;
   }
 
   .item-quantity-box {
@@ -927,6 +933,10 @@ body::-webkit-scrollbar-corner {
 
   .item-details-content {
     padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+
+  .item-details-commands pre {
     font-size: 0.9rem;
   }
 

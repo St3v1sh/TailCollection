@@ -233,7 +233,9 @@ function renderInventory(items) {
                 <div class="item-display-group">
                     <div class="item-quantity-box">${quantityDisplay}</div>
                     <div class="rarity-tag">${item.rarity.toUpperCase()}</div>
-                    <div><span class="item-display">${item.display}</span><span class="small-item-quantity-box"> x ${quantityDisplay}</span></div>
+                    <div class="item-name-container">
+                        <span class="item-display" title="${item.display}">${item.display}</span><span class="small-item-quantity-box">x ${quantityDisplay}</span>
+                    </div>
                 </div>
                 <div class="item-right-group">
                     <span class="item-size size-${item.size.toLowerCase()}">${item.size}</span>
@@ -243,6 +245,7 @@ function renderInventory(items) {
             <div class="item-details">
                 <div class="item-details-content">
                     <ul>
+                        <li><strong>Name:</strong><span>${item.display}</span></li>
                         <li><strong>Rarity:</strong><span>${item.rarity}</span></li>
                         <li><strong>Size:</strong><span>${item.size}</span></li>
                         <li><strong>Quantity:</strong><span>${item.quantity} Owned</span></li>
@@ -253,6 +256,7 @@ function renderInventory(items) {
                         <pre><code data-copy="!settail ${item.display}">!settail ${item.display}</code></pre>
                         ${item.quantity > upgradeCosts[item.rarity] && item.size !== 'Massive' ? '<pre><code data-copy="!upgrade">!upgrade</code></pre>' : ''}
                         ${item.rarity === 'Epic' ? '<pre><code data-copy="!epicaction">!epicaction</code></pre>' : ''}
+                        ${currentData.gachaInfo.freePulls > 0 ? `<pre><code data-copy="!freepull ${Math.min(10, currentData.gachaInfo.freePulls)}">!freepull ${Math.min(10, currentData.gachaInfo.freePulls)}</code></pre>` : ''}
                         </div>
                 </div>
             </div>
