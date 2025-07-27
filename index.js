@@ -11,13 +11,15 @@ const comparisons = {
     size: (a, b) => sizeOrder[b.size] - sizeOrder[a.size],
     quantity: (a, b) => b.quantity - a.quantity,
     name: (a, b) => a.display.localeCompare(b.display),
+    upgradeable: (a, b) => ((b.quantity > upgradeCosts[b.rarity] && b.size !== 'Massive') ? 1 : 0) - ((a.quantity > upgradeCosts[a.rarity] && a.size !== 'Massive') ? 1 : 0),
 };
 
 const sortComparisons = {
-    rarity: (a, b) => comparisons.rarity(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b) || comparisons.name(a, b),
-    size: (a, b) => comparisons.size(a, b) || comparisons.quantity(a, b) || comparisons.rarity(a, b) || comparisons.name(a, b),
-    quantity: (a, b) => comparisons.quantity(a, b) || comparisons.rarity(a, b) || comparisons.size(a, b) || comparisons.name(a, b),
-    name: (a, b) => comparisons.name(a, b) || comparisons.rarity(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b),
+    rarity: (a, b) => comparisons.rarity(a, b) || comparisons.size(a, b) || comparisons.upgradeable(a, b) || comparisons.quantity(a, b) || comparisons.name(a, b),
+    size: (a, b) => comparisons.size(a, b) || comparisons.upgradeable(a, b) || comparisons.quantity(a, b) || comparisons.rarity(a, b) || comparisons.name(a, b),
+    upgradeable: (a, b) => comparisons.upgradeable(a, b) || comparisons.rarity(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b) || comparisons.name(a, b),
+    quantity: (a, b) => comparisons.quantity(a, b) || comparisons.upgradeable(a, b) || comparisons.rarity(a, b) || comparisons.size(a, b) || comparisons.name(a, b),
+    name: (a, b) => comparisons.name(a, b) || comparisons.rarity(a, b) || comparisons.upgradeable(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b),
 };
 
 const grantPermissionSVG = '<svg width="20" height="20" viewBox="0 0 20 20" focusable="false" aria-hidden="true" role="presentation" fill="var(--text-primary)"><path fill-rule="evenodd" d="M7 2a4 4 0 0 0-1.015 7.87A1.334 1.334 0 0 1 4.667 11 2.667 2.667 0 0 0 2 13.667V18h2v-4.333c0-.368.298-.667.667-.667A3.32 3.32 0 0 0 7 12.047 3.32 3.32 0 0 0 9.333 13c.369 0 .667.299.667.667V18h2v-4.333A2.667 2.667 0 0 0 9.333 11c-.667 0-1.22-.49-1.318-1.13A4.002 4.002 0 0 0 7 2zM5 6a2 2 0 1 0 4 0 2 2 0 0 0-4 0z" clip-rule="evenodd"></path><path d="m15 7 3 3-3 3v-2h-3V9h3V7z"></path></svg>';
@@ -120,7 +122,7 @@ function transformData(iniData, username) {
         if (key === 'UserSettings') continue;
 
         const itemData = iniData[key];
-        // Basic validation to ensure we can display
+        // Basic validation to ensure we can display.
         if (itemData && itemData.Display && itemData.Quantity && itemData.Rarity && itemData.Size) {
             items.push({
                 display: itemData.Display,
@@ -243,7 +245,7 @@ function renderInventory(items) {
                     </div>
                 </div>
                 <div class="item-right-group">
-                    <span class="item-size size-${item.size.toLowerCase()}">${item.size}</span>
+                    <span class="item-size size-${item.size.toLowerCase().split(' ')[0]}">${item.size}</span>
                     <div class="expand-icon">+</div>
                 </div>
             </div>
