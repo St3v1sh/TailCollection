@@ -11,13 +11,15 @@ const comparisons = {
     size: (a, b) => sizeOrder[b.size] - sizeOrder[a.size],
     quantity: (a, b) => b.quantity - a.quantity,
     name: (a, b) => a.display.localeCompare(b.display),
+    upgradeable: (a, b) => ((b.quantity > upgradeCosts[b.rarity] && b.size !== 'Massive') ? 1 : 0) - ((a.quantity > upgradeCosts[a.rarity] && a.size !== 'Massive') ? 1 : 0),
 };
 
 const sortComparisons = {
-    rarity: (a, b) => comparisons.rarity(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b) || comparisons.name(a, b),
-    size: (a, b) => comparisons.size(a, b) || comparisons.quantity(a, b) || comparisons.rarity(a, b) || comparisons.name(a, b),
-    quantity: (a, b) => comparisons.quantity(a, b) || comparisons.rarity(a, b) || comparisons.size(a, b) || comparisons.name(a, b),
-    name: (a, b) => comparisons.name(a, b) || comparisons.rarity(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b),
+    rarity: (a, b) => comparisons.rarity(a, b) || comparisons.size(a, b) || comparisons.upgradeable(a, b) || comparisons.quantity(a, b) || comparisons.name(a, b),
+    size: (a, b) => comparisons.size(a, b) || comparisons.upgradeable(a, b) || comparisons.quantity(a, b) || comparisons.rarity(a, b) || comparisons.name(a, b),
+    upgradeable: (a, b) => comparisons.upgradeable(a, b) || comparisons.rarity(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b) || comparisons.name(a, b),
+    quantity: (a, b) => comparisons.quantity(a, b) || comparisons.upgradeable(a, b) || comparisons.rarity(a, b) || comparisons.size(a, b) || comparisons.name(a, b),
+    name: (a, b) => comparisons.name(a, b) || comparisons.rarity(a, b) || comparisons.upgradeable(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b),
 };
 
 // Main page elements.
