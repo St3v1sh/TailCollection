@@ -725,7 +725,6 @@ body::-webkit-scrollbar-corner {
 
   .item-header {
     justify-content: left;
-    flex-direction: column;
     align-items: start;
     flex-wrap: nowrap;
     row-gap: 8px;
@@ -752,13 +751,12 @@ body::-webkit-scrollbar-corner {
   }
 
   .rarity-tag {
-    order: 3;
+    display: none;
   }
 
   .item-right-group {
     display: flex;
-    width: 100%;
-    justify-content: space-between;
+    justify-content: end;
     flex-grow: 1;
     order: 4;
     margin-left: 0;
@@ -786,7 +784,7 @@ body::-webkit-scrollbar-corner {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 500px) {
   .page-container {
     padding: 8px;
   }
@@ -855,6 +853,12 @@ body::-webkit-scrollbar-corner {
 
   .item-header {
     padding: 8px 10px;
+    flex-direction: column;
+  }
+
+  .item-right-group {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .item-details-content {
