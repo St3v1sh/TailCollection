@@ -256,7 +256,7 @@ function renderInventory(items) {
                     <div class="item-details-commands">
                         <span><strong>Click &amp; Copy:</strong></span>
                         <pre><code data-copy="!settail ${item.display}">!settail ${item.display}</code></pre>
-                        ${item.quantity > upgradeCosts[item.rarity] && item.size !== 'Massive' ? '<pre><code data-copy="!upgrade">!upgrade</code></pre>' : ''}
+                        ${item.quantity > upgradeCosts[item.rarity] && item.size !== 'Massive' ? `<pre><code data-copy="!upgrade ${item.display}">!upgrade ${item.display}</code></pre>` : ''}
                         ${item.rarity === 'Epic' ? '<pre><code data-copy="!epicaction">!epicaction</code></pre>' : ''}
                         ${currentData.gachaInfo.freePulls > 0 ? `<pre><code data-copy="!freepull ${Math.min(10, currentData.gachaInfo.freePulls)}">!freepull ${Math.min(10, currentData.gachaInfo.freePulls)}</code></pre>` : ''}
                         </div>
