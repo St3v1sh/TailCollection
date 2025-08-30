@@ -48,6 +48,7 @@ const pityPointsDisplay = document.getElementById('pity-points-display');
 // Lifetime Stats Elements.
 const lifetimeStatsContainer = document.getElementById('lifetime-stats-container');
 const toggleStatsButton = document.getElementById('toggle-stats-button');
+const statsUsername = document.getElementById('stats-small-username');
 const statsUniquePulls = document.getElementById('stats-unique-count');
 const statsTotalPulls = document.getElementById('stats-total-pulls');
 const statsCommonCount = document.getElementById('stats-common-count');
@@ -173,6 +174,8 @@ function renderLifetimeStats(stats) {
 
     statsUniquePulls.textContent = currentData.items.length;
     statsTotalPulls.textContent = stats.totalPulls;
+
+    statsUsername.textContent = currentData.username;
 
     statsCommonCount.textContent = stats.rarityCounts.Common;
     statsCommonCount.classList.remove('rarity-common-text');
@@ -415,49 +418,50 @@ toggleStatsButton.addEventListener('click', () => {
 });
 
 // --- Twitch extension ---
-function fetchTwitchUsername(helixToken, clientId) {
-    if (!window.Twitch.ext.viewer.isLinked) {
-        const innerHTML = errorHTML.askPermission();
-        showErrorModal(innerHTML);
-        return;
-    }
-    closeErrorModal();
+// function fetchTwitchUsername(helixToken, clientId) {
+//     if (!window.Twitch.ext.viewer.isLinked) {
+//         const innerHTML = errorHTML.askPermission();
+//         showErrorModal(innerHTML);
+//         return;
+//     }
+//     closeErrorModal();
 
-    const viewerId = window.Twitch.ext.viewer.id;
-    const twitchApiURL = `https://api.twitch.tv/helix/users/?id=${viewerId}`;
+//     const viewerId = window.Twitch.ext.viewer.id;
+//     const twitchApiURL = `https://api.twitch.tv/helix/users/?id=${viewerId}`;
 
-    fetch(twitchApiURL, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Extension ${helixToken}`,
-            'Client-Id': clientId,
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.data && data.data.length > 0) {
-                const username = data.data[0].display_name;
-                fetchAndDisplayUserData(username);
-            } else {
-                const innerHTML = errorHTML.communication(); const enableButtons = true;
-                displayError(innerHTML, enableButtons);
-            }
-        })
-        .catch(_ => {
-            const innerHTML = errorHTML.communication();
-            const enableButtons = true;
-            displayError(innerHTML, enableButtons);
-        });
-}
+//     fetch(twitchApiURL, {
+//         method: 'GET',
+//         headers: {
+//             'Authorization': `Extension ${helixToken}`,
+//             'Client-Id': clientId,
+//         }
+//     })
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.data && data.data.length > 0) {
+//                 const username = data.data[0].display_name;
+//                 fetchAndDisplayUserData(username);
+//             } else {
+//                 const innerHTML = errorHTML.communication(); const enableButtons = true;
+//                 displayError(innerHTML, enableButtons);
+//             }
+//         })
+//         .catch(_ => {
+//             const innerHTML = errorHTML.communication();
+//             const enableButtons = true;
+//             displayError(innerHTML, enableButtons);
+//         });
+// }
 
-window.Twitch.ext.onAuthorized((auth) => {
-    if (auth.userId.startsWith('A')) {
-        const innerHTML = errorHTML.noPermission();
-        showErrorModal(innerHTML);
-    } else {
-        fetchTwitchUsername(auth.helixToken, auth.clientId);
-    }
-});
+// window.Twitch.ext.onAuthorized((auth) => {
+//     if (auth.userId.startsWith('A')) {
+//         const innerHTML = errorHTML.noPermission();
+//         showErrorModal(innerHTML);
+//     } else {
+//         fetchTwitchUsername(auth.helixToken, auth.clientId);
+//     }
+// });
+fetchAndDisplayUserData("st3v1sh")
 
 // Wait for Twitch data.
 pityPointsDisplay.textContent = '...';
