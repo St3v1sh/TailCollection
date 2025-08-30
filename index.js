@@ -418,50 +418,49 @@ toggleStatsButton.addEventListener('click', () => {
 });
 
 // --- Twitch extension ---
-// function fetchTwitchUsername(helixToken, clientId) {
-//     if (!window.Twitch.ext.viewer.isLinked) {
-//         const innerHTML = errorHTML.askPermission();
-//         showErrorModal(innerHTML);
-//         return;
-//     }
-//     closeErrorModal();
+function fetchTwitchUsername(helixToken, clientId) {
+    if (!window.Twitch.ext.viewer.isLinked) {
+        const innerHTML = errorHTML.askPermission();
+        showErrorModal(innerHTML);
+        return;
+    }
+    closeErrorModal();
 
-//     const viewerId = window.Twitch.ext.viewer.id;
-//     const twitchApiURL = `https://api.twitch.tv/helix/users/?id=${viewerId}`;
+    const viewerId = window.Twitch.ext.viewer.id;
+    const twitchApiURL = `https://api.twitch.tv/helix/users/?id=${viewerId}`;
 
-//     fetch(twitchApiURL, {
-//         method: 'GET',
-//         headers: {
-//             'Authorization': `Extension ${helixToken}`,
-//             'Client-Id': clientId,
-//         }
-//     })
-//         .then(response => response.json())
-//         .then(data => {
-//             if (data.data && data.data.length > 0) {
-//                 const username = data.data[0].display_name;
-//                 fetchAndDisplayUserData(username);
-//             } else {
-//                 const innerHTML = errorHTML.communication(); const enableButtons = true;
-//                 displayError(innerHTML, enableButtons);
-//             }
-//         })
-//         .catch(_ => {
-//             const innerHTML = errorHTML.communication();
-//             const enableButtons = true;
-//             displayError(innerHTML, enableButtons);
-//         });
-// }
+    fetch(twitchApiURL, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Extension ${helixToken}`,
+            'Client-Id': clientId,
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.data && data.data.length > 0) {
+                const username = data.data[0].display_name;
+                fetchAndDisplayUserData(username);
+            } else {
+                const innerHTML = errorHTML.communication(); const enableButtons = true;
+                displayError(innerHTML, enableButtons);
+            }
+        })
+        .catch(_ => {
+            const innerHTML = errorHTML.communication();
+            const enableButtons = true;
+            displayError(innerHTML, enableButtons);
+        });
+}
 
-// window.Twitch.ext.onAuthorized((auth) => {
-//     if (auth.userId.startsWith('A')) {
-//         const innerHTML = errorHTML.noPermission();
-//         showErrorModal(innerHTML);
-//     } else {
-//         fetchTwitchUsername(auth.helixToken, auth.clientId);
-//     }
-// });
-fetchAndDisplayUserData("st3v1sh")
+window.Twitch.ext.onAuthorized((auth) => {
+    if (auth.userId.startsWith('A')) {
+        const innerHTML = errorHTML.noPermission();
+        showErrorModal(innerHTML);
+    } else {
+        fetchTwitchUsername(auth.helixToken, auth.clientId);
+    }
+});
 
 // Wait for Twitch data.
 pityPointsDisplay.textContent = '...';
