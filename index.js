@@ -40,20 +40,34 @@ const pityPointsDisplay = document.getElementById('pity-points-display');
 // Lifetime Stats Elements.
 const lifetimeStatsContainer = document.getElementById('lifetime-stats-container');
 const toggleStatsButton = document.getElementById('toggle-stats-button');
-const statsUniquePulls = document.getElementById('stats-unique-count');
-const statsTotalPulls = document.getElementById('stats-total-pulls');
-const statsCommonCount = document.getElementById('stats-common-count');
-const statsRareCount = document.getElementById('stats-rare-count');
-const statsEpicCount = document.getElementById('stats-epic-count');
-const statsLegendaryCount = document.getElementById('stats-legendary-count');
-const statsSmallCount = document.getElementById('stats-small-count');
-const statsNormalCount = document.getElementById('stats-normal-count');
-const statsLargeCount = document.getElementById('stats-large-count');
-const statsMassiveCount = document.getElementById('stats-massive-count');
+const statsUniqueTotal = document.getElementById('stats-unique-total');
+const statsUniqueCommon = document.getElementById('stats-unique-common');
+const statsUniqueRare = document.getElementById('stats-unique-rare');
+const statsUniqueEpic = document.getElementById('stats-unique-epic');
+const statsUniqueLegendary = document.getElementById('stats-unique-legendary');
+const statsOwnedTotal = document.getElementById('stats-owned-total');
+const statsOwnedCommon = document.getElementById('stats-owned-common');
+const statsOwnedRare = document.getElementById('stats-owned-rare');
+const statsOwnedEpic = document.getElementById('stats-owned-epic');
+const statsOwnedLegendary = document.getElementById('stats-owned-legendary');
+const statsSizesTotal = document.getElementById('stats-sizes-total');
+const statsSizeSmall = document.getElementById('stats-size-small');
+const statsSizeNormal = document.getElementById('stats-size-normal');
+const statsSizeLarge = document.getElementById('stats-size-large');
+const statsSizeMassive = document.getElementById('stats-size-massive');
 const statsMostCommon = document.getElementById('stats-most-common');
 const statsMostRare = document.getElementById('stats-most-rare');
 const statsMostEpic = document.getElementById('stats-most-epic');
 const statsMostLegendary = document.getElementById('stats-most-legendary');
+
+function displayCapped(value) {
+    return value > 999 ? '999+' : value;
+}
+
+function setStatValue(element, value) {
+    element.textContent = displayCapped(value);
+    element.title = value > 999 ? String(value) : '';
+}
 
 // Modal elements.
 const searchModal = document.getElementById('user-search-modal');
@@ -63,10 +77,10 @@ const modalSearchButton = document.getElementById('modal-search-button');
 
 function calculateLifetimeStats(items) {
     const stats = {
-        totalPulls: 0,
-        rarityCounts: { Common: 0, Rare: 0, Epic: 0, Legendary: 0 },
-        sizeCounts: { Small: 0, 'Normal Sized': 0, Large: 0, Massive: 0 },
-        mostPulled: {
+        uniqueByRarity: { Common: 0, Rare: 0, Epic: 0, Legendary: 0 },
+        ownedByRarity: { Common: 0, Rare: 0, Epic: 0, Legendary: 0 },
+        uniqueSizes: { Small: 0, 'Normal Sized': 0, Large: 0, Massive: 0 },
+        mostOwned: {
             Common: { name: 'None', count: 0 },
             Rare: { name: 'None', count: 0 },
             Epic: { name: 'None', count: 0 },
@@ -75,27 +89,20 @@ function calculateLifetimeStats(items) {
     };
 
     items.forEach(item => {
-        // Quantity calculation.
-        const sizeRank = sizeOrder[item.size];
-        const upgradeCost = upgradeCosts[item.rarity];
-        const startingSizeRank = item.rarity === 'Legendary' ? 2 : 1;
+        // Unique tails per rarity.
+        stats.uniqueByRarity[item.rarity]++;
 
-        const upgradesMade = Math.max(0, sizeRank - startingSizeRank);
-        const tailsConsumedByUpgrades = upgradesMade * upgradeCost;
-        const totalPulled = tailsConsumedByUpgrades + item.quantity;
-        stats.totalPulls += totalPulled;
+        // Total owned quantity per rarity.
+        stats.ownedByRarity[item.rarity] += item.quantity;
 
-        // Increment rarity stats.
-        stats.rarityCounts[item.rarity] += totalPulled;
-
-        // Increment size stats.
-        if (stats.sizeCounts.hasOwnProperty(item.size)) {
-            stats.sizeCounts[item.size]++;
+        // Unique tails per size.
+        if (stats.uniqueSizes.hasOwnProperty(item.size)) {
+            stats.uniqueSizes[item.size]++;
         }
 
-        // Update most pulled stats.
-        if (totalPulled > stats.mostPulled[item.rarity].count) {
-            stats.mostPulled[item.rarity] = { name: item.display, count: totalPulled };
+        // Most owned (highest current quantity per rarity).
+        if (item.quantity > stats.mostOwned[item.rarity].count) {
+            stats.mostOwned[item.rarity] = { name: item.display, count: item.quantity };
         }
     });
 
@@ -166,45 +173,81 @@ function renderLifetimeStats(stats) {
     }
     lifetimeStatsContainer.style.display = 'block';
 
-    statsUniquePulls.textContent = currentData.items.length;
-    statsTotalPulls.textContent = stats.totalPulls;
+    // Unique Pulls (total + by rarity).
+    setStatValue(statsUniqueTotal, currentData.items.length);
 
-    statsCommonCount.textContent = stats.rarityCounts.Common;
-    statsCommonCount.classList.remove('rarity-common-text');
-    if (stats.rarityCounts.Common > 0) statsCommonCount.classList.add('rarity-common-text');
+    setStatValue(statsUniqueCommon, stats.uniqueByRarity.Common);
+    statsUniqueCommon.classList.remove('rarity-common-text');
+    if (stats.uniqueByRarity.Common > 0) statsUniqueCommon.classList.add('rarity-common-text');
 
-    statsRareCount.textContent = stats.rarityCounts.Rare;
-    statsRareCount.classList.remove('rarity-rare-text');
-    if (stats.rarityCounts.Rare > 0) statsRareCount.classList.add('rarity-rare-text');
+    setStatValue(statsUniqueRare, stats.uniqueByRarity.Rare);
+    statsUniqueRare.classList.remove('rarity-rare-text');
+    if (stats.uniqueByRarity.Rare > 0) statsUniqueRare.classList.add('rarity-rare-text');
 
-    statsEpicCount.textContent = stats.rarityCounts.Epic;
-    statsEpicCount.classList.remove('rarity-epic-text');
-    if (stats.rarityCounts.Epic > 0) statsEpicCount.classList.add('rarity-epic-text');
+    setStatValue(statsUniqueEpic, stats.uniqueByRarity.Epic);
+    statsUniqueEpic.classList.remove('rarity-epic-text');
+    if (stats.uniqueByRarity.Epic > 0) statsUniqueEpic.classList.add('rarity-epic-text');
 
-    statsLegendaryCount.textContent = stats.rarityCounts.Legendary;
-    statsLegendaryCount.classList.remove('rarity-legendary-text');
-    if (stats.rarityCounts.Legendary > 0) statsLegendaryCount.classList.add('rarity-legendary-text');
+    setStatValue(statsUniqueLegendary, stats.uniqueByRarity.Legendary);
+    statsUniqueLegendary.classList.remove('rarity-legendary-text');
+    if (stats.uniqueByRarity.Legendary > 0) statsUniqueLegendary.classList.add('rarity-legendary-text');
 
-    statsSmallCount.textContent = stats.sizeCounts.Small;
-    statsNormalCount.textContent = stats.sizeCounts['Normal Sized'];
-    statsLargeCount.textContent = stats.sizeCounts.Large;
-    statsMassiveCount.textContent = stats.sizeCounts.Massive;
+    // Owned by Rarity (sum of quantities).
+    const totalOwned = stats.ownedByRarity.Common + stats.ownedByRarity.Rare + stats.ownedByRarity.Epic + stats.ownedByRarity.Legendary;
+    setStatValue(statsOwnedTotal, totalOwned);
 
-    statsMostCommon.textContent = stats.mostPulled.Common.name;
+    setStatValue(statsOwnedCommon, stats.ownedByRarity.Common);
+    statsOwnedCommon.classList.remove('rarity-common-text');
+    if (stats.ownedByRarity.Common > 0) statsOwnedCommon.classList.add('rarity-common-text');
+
+    setStatValue(statsOwnedRare, stats.ownedByRarity.Rare);
+    statsOwnedRare.classList.remove('rarity-rare-text');
+    if (stats.ownedByRarity.Rare > 0) statsOwnedRare.classList.add('rarity-rare-text');
+
+    setStatValue(statsOwnedEpic, stats.ownedByRarity.Epic);
+    statsOwnedEpic.classList.remove('rarity-epic-text');
+    if (stats.ownedByRarity.Epic > 0) statsOwnedEpic.classList.add('rarity-epic-text');
+
+    setStatValue(statsOwnedLegendary, stats.ownedByRarity.Legendary);
+    statsOwnedLegendary.classList.remove('rarity-legendary-text');
+    if (stats.ownedByRarity.Legendary > 0) statsOwnedLegendary.classList.add('rarity-legendary-text');
+
+    // Unique Sizes.
+    const totalSizes = stats.uniqueSizes.Small + stats.uniqueSizes['Normal Sized'] + stats.uniqueSizes.Large + stats.uniqueSizes.Massive;
+    setStatValue(statsSizesTotal, totalSizes);
+
+    setStatValue(statsSizeSmall, stats.uniqueSizes.Small);
+    setStatValue(statsSizeNormal, stats.uniqueSizes['Normal Sized']);
+    setStatValue(statsSizeLarge, stats.uniqueSizes.Large);
+    setStatValue(statsSizeMassive, stats.uniqueSizes.Massive);
+
+    // Most Owned (name + quantity in parentheses).
+    function renderMostOwned(element, entry) {
+        if (entry.count > 0) {
+            const countDisplay = displayCapped(entry.count);
+            element.textContent = `${entry.name} (${countDisplay})`;
+            element.title = entry.count > 999 ? `${entry.name} (${entry.count})` : '';
+        } else {
+            element.textContent = 'None';
+            element.title = '';
+        }
+    }
+
+    renderMostOwned(statsMostCommon, stats.mostOwned.Common);
     statsMostCommon.classList.remove('rarity-common-text');
-    if (stats.mostPulled.Common.count > 0) statsMostCommon.classList.add('rarity-common-text');
+    if (stats.mostOwned.Common.count > 0) statsMostCommon.classList.add('rarity-common-text');
 
-    statsMostRare.textContent = stats.mostPulled.Rare.name;
+    renderMostOwned(statsMostRare, stats.mostOwned.Rare);
     statsMostRare.classList.remove('rarity-rare-text');
-    if (stats.mostPulled.Rare.count > 0) statsMostRare.classList.add('rarity-rare-text');
+    if (stats.mostOwned.Rare.count > 0) statsMostRare.classList.add('rarity-rare-text');
 
-    statsMostEpic.textContent = stats.mostPulled.Epic.name;
+    renderMostOwned(statsMostEpic, stats.mostOwned.Epic);
     statsMostEpic.classList.remove('rarity-epic-text');
-    if (stats.mostPulled.Epic.count > 0) statsMostEpic.classList.add('rarity-epic-text');
+    if (stats.mostOwned.Epic.count > 0) statsMostEpic.classList.add('rarity-epic-text');
 
-    statsMostLegendary.textContent = stats.mostPulled.Legendary.name;
+    renderMostOwned(statsMostLegendary, stats.mostOwned.Legendary);
     statsMostLegendary.classList.remove('rarity-legendary-text');
-    if (stats.mostPulled.Legendary.count > 0) statsMostLegendary.classList.add('rarity-legendary-text');
+    if (stats.mostOwned.Legendary.count > 0) statsMostLegendary.classList.add('rarity-legendary-text');
 }
 
 function renderInventory(items) {
@@ -219,10 +262,14 @@ function renderInventory(items) {
     inventoryPanel.innerHTML = '';
 
     const fragment = document.createDocumentFragment();
+    const maxDuration = 1.0;
+    const totalStagger = maxDuration * (1 - 1 / (1 + items.length * 0.1));
+    const staggerStep = totalStagger / items.length;
+
     items.forEach((item, index) => {
         const itemCard = document.createElement('div');
         itemCard.className = `item-card rarity-${item.rarity.toLowerCase()}`;
-        itemCard.style.animationDelay = `${0.3 + index * 0.05}s`;
+        itemCard.style.animationDelay = `${0.3 + index * staggerStep}s`;
 
         if (item.display === currentData.equippedTail) {
             itemCard.classList.add('equipped');
@@ -257,6 +304,7 @@ function renderInventory(items) {
                         <span><strong>Click &amp; Copy:</strong></span>
                         <pre><code data-copy="!settail ${item.display}">!settail ${item.display}</code></pre>
                         ${item.quantity > upgradeCosts[item.rarity] && item.size !== 'Massive' ? `<pre><code data-copy="!upgrade ${item.display}">!upgrade ${item.display}</code></pre>` : ''}
+                        ${item.size === 'Massive' && item.quantity > upgradeCosts[item.rarity] ? `<pre><code data-copy="!convert ${item.display}">!convert ${item.display}</code></pre>` : ''}
                         ${item.rarity === 'Epic' ? '<pre><code data-copy="!epicaction">!epicaction</code></pre>' : ''}
                         ${currentData.gachaInfo.freePulls > 0 ? `<pre><code data-copy="!freepull ${Math.min(10, currentData.gachaInfo.freePulls)}">!freepull ${Math.min(10, currentData.gachaInfo.freePulls)}</code></pre>` : ''}
                         </div>

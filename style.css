@@ -253,11 +253,6 @@ header {
   padding-bottom: 4px;
 }
 
-#stats-total-pulls {
-  font-family: var(--font-display);
-  font-size: 3rem;
-  line-height: 1;
-}
 
 .stat-block ul {
   list-style: none;
@@ -791,10 +786,6 @@ body::-webkit-scrollbar-corner {
 
   .stats-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  #stats-total-pulls {
-    font-size: 2rem;
   }
 
   .item-header {

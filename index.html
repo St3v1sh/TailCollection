@@ -54,34 +54,35 @@
           <button id="toggle-stats-button" class="header-btn">Show Lifetime Stats</button>
           <div id="lifetime-stats-details">
             <div class="stats-grid">
-              <div class="stat-block lifetime-pulls">
-                <h4>Total Pulls</h4>
+              <div class="stat-block unique-pulls">
+                <h4>Unique Pulls (<span id="stats-unique-total">0</span>)</h4>
                 <ul>
-                  <li><span>Unique tails:</span><strong id="stats-unique-count">0</strong></li>
-                  <li><span>Total pulls:</span></li>
-                </ul>
-                <p id="stats-total-pulls">0</p>
-              </div>
-              <div class="stat-block rarity-counts">
-                <h4>Pulls by Rarity</h4>
-                <ul>
-                  <li class="rarity-common-text"><span>Common:</span><strong id="stats-common-count">0</strong></li>
-                  <li class="rarity-rare-text"><span>Rare:</span><strong id="stats-rare-count">0</strong></li>
-                  <li class="rarity-epic-text"><span>Epic:</span><strong id="stats-epic-count">0</strong></li>
-                  <li class="rarity-legendary-text"><span>Legendary:</span><strong id="stats-legendary-count">0</strong></li>
+                  <li class="rarity-common-text"><span>Common:</span><strong id="stats-unique-common">0</strong></li>
+                  <li class="rarity-rare-text"><span>Rare:</span><strong id="stats-unique-rare">0</strong></li>
+                  <li class="rarity-epic-text"><span>Epic:</span><strong id="stats-unique-epic">0</strong></li>
+                  <li class="rarity-legendary-text"><span>Legendary:</span><strong id="stats-unique-legendary">0</strong></li>
                 </ul>
               </div>
-              <div class="stat-block size-counts">
-                <h4>Tails by Size</h4>
+              <div class="stat-block owned-by-rarity">
+                <h4>Owned by Rarity (<span id="stats-owned-total">0</span>)</h4>
                 <ul>
-                  <li><span>Small:</span><strong id="stats-small-count">0</strong></li>
-                  <li><span>Normal Sized:</span><strong id="stats-normal-count">0</strong></li>
-                  <li><span>Large:</span><strong id="stats-large-count">0</strong></li>
-                  <li><span>Massive:</span><strong id="stats-massive-count">0</strong></li>
+                  <li class="rarity-common-text"><span>Common:</span><strong id="stats-owned-common">0</strong></li>
+                  <li class="rarity-rare-text"><span>Rare:</span><strong id="stats-owned-rare">0</strong></li>
+                  <li class="rarity-epic-text"><span>Epic:</span><strong id="stats-owned-epic">0</strong></li>
+                  <li class="rarity-legendary-text"><span>Legendary:</span><strong id="stats-owned-legendary">0</strong></li>
                 </ul>
               </div>
-              <div class="stat-block most-pulled">
-                <h4>Most Pulled</h4>
+              <div class="stat-block unique-sizes">
+                <h4>Unique Sizes (<span id="stats-sizes-total">0</span>)</h4>
+                <ul>
+                  <li><span>Small:</span><strong id="stats-size-small">0</strong></li>
+                  <li><span>Normal Sized:</span><strong id="stats-size-normal">0</strong></li>
+                  <li><span>Large:</span><strong id="stats-size-large">0</strong></li>
+                  <li><span>Massive:</span><strong id="stats-size-massive">0</strong></li>
+                </ul>
+              </div>
+              <div class="stat-block most-owned">
+                <h4>Most Owned</h4>
                 <ul>
                   <li class="rarity-common-text"><span>Common:</span><strong id="stats-most-common">None</strong></li>
                   <li class="rarity-rare-text"><span>Rare:</span><strong id="stats-most-rare">None</strong></li>
