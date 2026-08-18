@@ -22,11 +22,12 @@ const sortComparisons = {
     name: (a, b) => comparisons.name(a, b) || comparisons.rarity(a, b) || comparisons.upgradeable(a, b) || comparisons.quantity(a, b) || comparisons.size(a, b),
 };
 
-const grantPermissionSVG = '<svg width="20" height="20" viewBox="0 0 20 20" focusable="false" aria-hidden="true" role="presentation" fill="var(--text-primary)"><path fill-rule="evenodd" d="M7 2a4 4 0 0 0-1.015 7.87A1.334 1.334 0 0 1 4.667 11 2.667 2.667 0 0 0 2 13.667V18h2v-4.333c0-.368.298-.667.667-.667A3.32 3.32 0 0 0 7 12.047 3.32 3.32 0 0 0 9.333 13c.369 0 .667.299.667.667V18h2v-4.333A2.667 2.667 0 0 0 9.333 11c-.667 0-1.22-.49-1.318-1.13A4.002 4.002 0 0 0 7 2zM5 6a2 2 0 1 0 4 0 2 2 0 0 0-4 0z" clip-rule="evenodd"></path><path d="m15 7 3 3-3 3v-2h-3V9h3V7z"></path></svg>';
+const grantPermissionSVG = '<svg width="20" height="20" viewBox="0 0 20 20" focusable="false" aria-hidden="true" role="presentation" fill="currentColor"><path fill-rule="evenodd" d="M7 2a4 4 0 0 0-1.015 7.87A1.334 1.334 0 0 1 4.667 11 2.667 2.667 0 0 0 2 13.667V18h2v-4.333c0-.368.298-.667.667-.667A3.32 3.32 0 0 0 7 12.047 3.32 3.32 0 0 0 9.333 13c.369 0 .667.299.667.667V18h2v-4.333A2.667 2.667 0 0 0 9.333 11c-.667 0-1.22-.49-1.318-1.13A4.002 4.002 0 0 0 7 2zM5 6a2 2 0 1 0 4 0 2 2 0 0 0-4 0z" clip-rule="evenodd"></path><path d="m15 7 3 3-3 3v-2h-3V9h3V7z"></path></svg>';
+const grantPermissionButton = `<button onclick="window.Twitch.ext.actions.requestIdShare()" style="display: inline-flex; align-items: center; gap: 8px; margin-top: 1rem; padding: 10px 24px; font-family: var(--font-display); font-size: 1.1rem; letter-spacing: 1px; color: #fff; background-color: var(--accent-primary); border: none; border-radius: var(--border-radius-sm); cursor: pointer;">${grantPermissionSVG} Grant Permissions</button>`;
 const errorHTML = {
     communication: () => '<p style="color: var(--color-error); font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">Error communicating with Twitch. Please try again.</p>',
-    noPermission: () => `<p style="color: var(--color-error); font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">This extension requires your username.<br><br>Use the "Grant Permissions" button to authenticate.<br><br>It looks like this:</p>${grantPermissionSVG}`,
-    askPermission: () => `<p style="color: var(--color-error); font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">Use the "Grant Permissions" button to authenticate.<br><br>It looks like this:</p>${grantPermissionSVG}`,
+    noPermission: () => `<div style="text-align: center; padding: 2rem;"><p style="color: var(--color-error); font-weight: bold; font-size: 1.2rem;">This extension requires your username to display your tail collection.</p><br>${grantPermissionButton}</div>`,
+    askPermission: () => `<div style="text-align: center; padding: 2rem;"><p style="color: var(--color-error); font-weight: bold; font-size: 1.2rem;">Share your identity to view your tail collection.</p><br>${grantPermissionButton}</div>`,
     other: (error) => `<p style="color: var(--color-error); font-weight: bold; text-align: center; font-size: 1.2rem; padding: 2rem;">${error.message}</p>`,
 }
 
@@ -466,6 +467,8 @@ toggleStatsButton.addEventListener('click', () => {
 });
 
 // --- Twitch extension ---
+let currentAuth = null;
+
 function fetchTwitchUsername(helixToken, clientId) {
     if (!window.Twitch.ext.viewer.isLinked) {
         const innerHTML = errorHTML.askPermission();
@@ -502,6 +505,7 @@ function fetchTwitchUsername(helixToken, clientId) {
 }
 
 window.Twitch.ext.onAuthorized((auth) => {
+    currentAuth = auth;
     if (auth.userId.startsWith('A')) {
         const innerHTML = errorHTML.noPermission();
         showErrorModal(innerHTML);
@@ -510,8 +514,15 @@ window.Twitch.ext.onAuthorized((auth) => {
     }
 });
 
+// Retry when the viewer links their account after granting permissions.
+window.Twitch.ext.viewer.onChanged(() => {
+    if (currentAuth && !currentAuth.userId.startsWith('A') && window.Twitch.ext.viewer.isLinked) {
+        fetchTwitchUsername(currentAuth.helixToken, currentAuth.clientId);
+    }
+});
+
 // Wait for Twitch data.
 pityPointsDisplay.textContent = '...';
 equippedTailDisplay.textContent = '...';
 freePullsDisplay.textContent = '...';
-inventoryPanel.innerHTML = `<p style="text-align: center; font-size: 1.2rem; padding: 2rem;">Waiting for Twitch authentication...<br><br>If authentication was not automatically triggered, use the "Grant Permissions" button to authenticate.<br><br>It looks like this:<br><br>${grantPermissionSVG}</p>`;
+inventoryPanel.innerHTML = `<div style="text-align: center; font-size: 1.2rem; padding: 2rem;">Waiting for Twitch authentication...<br><br>${grantPermissionButton}</div>`;
