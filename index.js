@@ -4,7 +4,7 @@ let currentData = {};
 const rarityOrder = { 'Common': 1, 'Rare': 2, 'Epic': 3, 'Legendary': 4 };
 const sizeOrder = { 'Small': 1, 'Normal Sized': 2, 'Large': 3, 'Massive': 4 };
 const upgradeCosts = { 'Common': 5, 'Rare': 4, 'Epic': 2, 'Legendary': 1 };
-const apiURL = 'https://script.google.com/macros/s/AKfycbyQU19SL4FVU3IWZpNuAh-DHWXpDETTy8d0daBvj8JULBfznhl_6SFGn7M6OWeKDftm-Q/exec';
+const apiURL = 'https://script.google.com/macros/s/AKfycbznQUOaU1GERX9wRd9eD_z8MyxCDo7ExcHq-rywNyXRAfl4I3oHeB5d06DOtQFnMgbwwA/exec';
 
 const comparisons = {
     rarity: (a, b) => rarityOrder[b.rarity] - rarityOrder[a.rarity],
